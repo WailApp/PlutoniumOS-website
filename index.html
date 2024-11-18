@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlatinumOS</title>
+    <style>
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('background.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #333; /* Darker text color for better contrast on light background */
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7); /* Light text shadow for better readability */
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Align items to the center */
+            height: 100vh;
+            flex-direction: column;
+            opacity: 0;
+            animation: fadeIn 2s forwards; /* Fade-in animation */
+        }
+        .container {
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center; /* Align content to the center */
+            transition: background 0.3s ease;
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 800px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s forwards 1.2s; /* Slide-up animation with delay */
+        }
+        .container:first-child {
+            border-radius: 0 0 16px 16px; /* No border-radius at the top */
+            margin-top: 0; /* No margin-top for the top container */
+        }
+        .container:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .button {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: #ff0000;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-shadow: none; /* Remove text shadow from buttons */
+        }
+        .button:hover {
+            background: #b30000;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 8px;
+            color: #000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 6px 20px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s;
+        }
+        .social-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+        .social-button {
+            background: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .social-button img {
+            width: 20px;
+            height: 20px;
+        }
+        .social-button:hover {
+            background: #ccc;
+        }
+        .screenshot-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .screenshot-container img {
+            width: 50%; /* Make the image smaller */
+            max-width: 50%; /* Ensure the image is responsive */
+            border-radius: 16px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 6px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .screenshot-container img:hover {
+            transform: scale(1.05);
+        }
+        .select-container {
+            margin-top: 20px;
+            text-align: left; /* Align select container to the left */
+        }
+        .select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #888;
+            width: 50%;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .select:focus {
+            border-color: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="welcomeContainer">
+        <h1>Welcome to PlatinumOS</h1>
+        <p>Experience the next generation of operating systems.</p>
+        <button class="button" onclick="showDownload()">Download</button>
+    </div>
+
+    <div class="container screenshot-container">
+        <img src="Screen.png" alt="Screenshot of PlatinumOS">
+    </div>
+
+    <div class="container social-share">
+        <h2>Follow Us on Social Media</h2>
+        <div class="social-buttons">
+            <button class="social-button"><img src="youtube-icon.png" alt="YouTube"></button>
+            <button class="social-button"><img src="github-icon.png" alt="GitHub"></button>
+            <button class="social-button"><img src="discord-icon.png" alt="Discord"></button>
+        </div>
+    </div>
+
+    <div id="downloadModal" class="modal">
+        <div class="modal-content">
+            <span onclick="closeModal()" style="float:right;cursor:pointer;">&times;</span>
+            <h2>License Agreement</h2>
+            <p>Please accept the license agreement to proceed.</p>
+            <button class="button" onclick="showChannelSelection()">Accept</button>
+        </div>
+    </div>
+
+    <div id="channelModal" class="modal">
+        <div class="modal-content">
+            <span onclick="closeChannelModal()" style="float:right;cursor:pointer;">&times;</span>
+            <h2>Select Download Channel</h2>
+            <div class="select-container">
+                <select id="channelSelect" class="select">
+                    <option value="Stable">Stable</option>
+                    <option value="Beta">Beta</option>
+                </select>
+            </div>
+            <button class="button" onclick="confirmChannel()">Confirm</button>
+        </div>
+    </div>
+
+    <script>
+        function showDownload() {
+            document.getElementById('downloadModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('downloadModal').style.display = 'none';
+        }
+
+        function closeChannelModal() {
+            document.getElementById('channelModal').style.display = 'none';
+        }
+
+        function showChannelSelection() {
+            closeModal();
+            document.getElementById('channelModal').style.display = 'block';
+        }
+
+        function confirmChannel() {
+            const channel = document.getElementById('channelSelect').value;
+            alert('You have selected the ' + channel + ' channel.');
+            closeChannelModal();
+        }
+    </script>
+</body>
+</html>
